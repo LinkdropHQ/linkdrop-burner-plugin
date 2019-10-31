@@ -12,15 +12,15 @@ export default class LinkdropPlugin implements Plugin {
   initializePlugin(pluginContext: BurnerPluginContext) {
     this.pluginContext = pluginContext;
 
-    pluginContext.addPage('/claim', ClaimPage);
-    pluginContext.addButton('apps', 'Claim', '/claim', {
+    pluginContext.addPage('/linkdrop', ClaimPage);
+    pluginContext.addButton('apps', 'Claim', '/linkdrop', {
       description: 'Linkdrop claim page',
     });
     pluginContext.addElement('home-middle', MyElement);
 
     onQRScanned: ((scan: string, ctx: PluginActionContext) => {
       if (scan === 'Linkdrop Claim Plugin') {
-        ctx.actions.navigateTo('/claim');
+        ctx.actions.navigateTo('/linkdrop');
         return true;
       }
     });
