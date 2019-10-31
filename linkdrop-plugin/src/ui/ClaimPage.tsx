@@ -50,19 +50,27 @@ const onSubmit = async ({ linkdropSDK, receiverAddress }) => {
     campaignId
   } = getHashVariables()
 
-  const { success, txHash, errors } = await linkdropSDK.claim({
-    weiAmount,
-    tokenAddress,
-    tokenAmount,
-    expirationTime,
-    linkKey,
-    linkdropMasterAddress,
-    linkdropSignerSignature,
-    receiverAddress,
-    campaignId
-  })
-
-  console.log({ success, txHash, errors })
+  try {
+    const { success, txHash, errors } = await linkdropSDK.claim({
+      weiAmount,
+      tokenAddress,
+      tokenAmount,
+      expirationTime,
+      linkKey,
+      linkdropMasterAddress,
+      linkdropSignerSignature,
+      receiverAddress,
+      campaignId
+    })
+    if (success) {
+      return window.alert(`txHash: ${txHash}`)
+    }
+  } catch (err) {
+    const { response: { data: { errors } = {} } = {} } = err
+    if (errors) {
+      window.alert(`error occured: ${errors[0]}`)
+    }
+  }
 }
 
 
@@ -71,21 +79,20 @@ const onSubmit = async ({ linkdropSDK, receiverAddress }) => {
 const ClaimPage: React.FC<PluginPageContext> = ({ burnerComponents, assets, defaultAccount }) => {
   const { Page, Button } = burnerComponents;
 
-  const linkdropSDK = getLinkdropSDK({
-    factoryAddress,
-    chain,
-    linkdropMasterAddress: defaultAccount,
-    jsonRpcUrl,
-    apiHost,
-  })
-
-
   const {
     weiAmount,
     tokenAmount,
     linkdropSignerSignature,
+    linkdropMasterAddress
   } = getHashVariables()
 
+  const linkdropSDK = getLinkdropSDK({
+    factoryAddress,
+    chain,
+    linkdropMasterAddress: (linkdropMasterAddress || defaultAccount),
+    jsonRpcUrl,
+    apiHost,
+  })
 
   return (
     <Page title="Claim Page">
