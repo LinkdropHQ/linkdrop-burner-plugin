@@ -9,7 +9,7 @@ import ModernUI from '@burner-wallet/modern-ui';
 import MyPlugin from 'my-plugin';
 
 const core = new BurnerCore({
-  signers: [new InjectedSigner(), new LocalSigner()],
+  signers: [new LocalSigner()],
   gateways: [
     new InjectedGateway(),
     new InfuraGateway(process.env.REACT_APP_INFURA_KEY),

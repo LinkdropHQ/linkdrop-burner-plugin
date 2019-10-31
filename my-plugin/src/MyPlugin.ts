@@ -12,15 +12,15 @@ export default class MyPlugin implements Plugin {
   initializePlugin(pluginContext: BurnerPluginContext) {
     this.pluginContext = pluginContext;
 
-    pluginContext.addPage('/my-page', MyPage);
-    pluginContext.addButton('apps', 'My Plugin', '/my-page', {
-      description: 'Sample plugin page',
+    pluginContext.addPage('/claim', MyPage);
+    pluginContext.addButton('apps', 'Claim', '/claim', {
+      description: 'Linkdrop claim page',
     });
     pluginContext.addElement('home-middle', MyElement);
 
     onQRScanned: ((scan: string, ctx: PluginActionContext) => {
-      if (scan === 'My Plugin') {
-        ctx.actions.navigateTo('/my-page');
+      if (scan === 'Linkdrop Claim Plugin') {
+        ctx.actions.navigateTo('/claim');
         return true;
       }
     });
