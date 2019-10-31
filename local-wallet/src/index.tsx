@@ -5,7 +5,7 @@ import BurnerCore from '@burner-wallet/core';
 import { InjectedSigner, LocalSigner } from '@burner-wallet/core/signers';
 import { HTTPGateway } from '@burner-wallet/core/gateways';
 import ModernUI from '@burner-wallet/modern-ui';
-import MyPlugin from 'my-plugin';
+import LinkdropPlugin from 'linkdrop-plugin';
 
 const core = new BurnerCore({
   signers: [
@@ -35,7 +35,7 @@ const BurnerWallet = () =>
   <ModernUI
     title="Local Wallet"
     core={core}
-    plugins={[new MyPlugin()]}
+    plugins={[new LinkdropPlugin()]}
   />
 
 

@@ -1,18 +1,18 @@
 import { BurnerPluginContext, Plugin, Actions } from '@burner-wallet/types';
-import MyPage from './ui/MyPage';
+import ClaimPage from './ui/ClaimPage';
 import MyElement from './ui/MyElement';
 
 interface PluginActionContext {
   actions: Actions;
 }
 
-export default class MyPlugin implements Plugin {
+export default class LinkdropPlugin implements Plugin {
   private pluginContext?: BurnerPluginContext;
 
   initializePlugin(pluginContext: BurnerPluginContext) {
     this.pluginContext = pluginContext;
 
-    pluginContext.addPage('/claim', MyPage);
+    pluginContext.addPage('/claim', ClaimPage);
     pluginContext.addButton('apps', 'Claim', '/claim', {
       description: 'Linkdrop claim page',
     });
