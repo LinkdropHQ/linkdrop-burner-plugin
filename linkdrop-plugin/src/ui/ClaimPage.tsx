@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { PluginPageContext } from '@burner-wallet/types';
-import { Asset } from '@burner-wallet/assets';
 import { getHashVariables } from '@linkdrop/commons'
 import { ethers } from 'ethers'
-import LinkdropFactory from '../LinkdropFactory'
-console.log({ LinkdropFactory })
 import LinkdropSDK from '@linkdrop/sdk/src/index'
 
 const chain = "xdai"
@@ -76,10 +73,11 @@ const onSubmit = async ({ linkdropSDK, receiverAddress }) => {
 }
 
 const checkIfClaimed = async ({ linkdropMasterAddress, linkKey, campaignId }) => {
+  const abi = ["function isClaimedLink(address payable, uint, address) public view returns (bool)"]
   const provider = await new ethers.providers.JsonRpcProvider(jsonRpcUrl)
   const linkWallet = await new ethers.Wallet(linkKey, provider)
   const linkId = await linkWallet.address
-  const factoryContract = await new ethers.Contract(factoryAddress, LinkdropFactory.abi, provider)
+  const factoryContract = await new ethers.Contract(factoryAddress, abi, provider)
   return await factoryContract.isClaimedLink(linkdropMasterAddress, campaignId, linkId)
 }
 
@@ -111,7 +109,7 @@ const ClaimPage: React.FC<PluginPageContext> = ({ burnerComponents, assets, defa
     initialLinkCheck()
   }, []);
 
-  
+
 
   const linkdropSDK = getLinkdropSDK({
     factoryAddress,
