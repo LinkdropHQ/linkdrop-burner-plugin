@@ -74,10 +74,10 @@ const onSubmit = async ({ linkdropSDK, receiverAddress }) => {
 
 const checkIfClaimed = async ({ linkdropMasterAddress, linkKey, campaignId }) => {
   const abi = ["function isClaimedLink(address payable, uint, address) public view returns (bool)"]
-  const provider = await new ethers.providers.JsonRpcProvider(jsonRpcUrl)
-  const linkWallet = await new ethers.Wallet(linkKey, provider)
-  const linkId = await linkWallet.address
-  const factoryContract = await new ethers.Contract(factoryAddress, abi, provider)
+  const provider = new ethers.providers.JsonRpcProvider(jsonRpcUrl)
+  const linkWallet = new ethers.Wallet(linkKey)
+  const linkId = linkWallet.address
+  const factoryContract = new ethers.Contract(factoryAddress, abi, provider)
   return await factoryContract.isClaimedLink(linkdropMasterAddress, campaignId, linkId)
 }
 
