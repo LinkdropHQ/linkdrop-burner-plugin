@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PluginPageContext } from '@burner-wallet/types';
 import { Asset } from '@burner-wallet/assets';
 import { getHashVariables } from '@linkdrop/commons'
-
+import { ethers } from 'ethers'
+import LinkdropFactory from '../LinkdropFactory'
+console.log({ LinkdropFactory })
 import LinkdropSDK from '@linkdrop/sdk/src/index'
 
 const chain = "xdai"
@@ -73,18 +75,43 @@ const onSubmit = async ({ linkdropSDK, receiverAddress }) => {
   }
 }
 
+const checkIfClaimed = async ({ linkdropMasterAddress, linkKey, campaignId }) => {
+  const provider = await new ethers.providers.JsonRpcProvider(jsonRpcUrl)
+  const linkWallet = await new ethers.Wallet(linkKey, provider)
+  const linkId = await linkWallet.address
+  const factoryContract = await new ethers.Contract(factoryAddress, LinkdropFactory.abi, provider)
+  return await factoryContract.isClaimedLink(linkdropMasterAddress, campaignId, linkId)
+}
+
 
 
 
 const ClaimPage: React.FC<PluginPageContext> = ({ burnerComponents, assets, defaultAccount }) => {
   const { Page, Button } = burnerComponents;
 
+  const [claimed, setClaimed] = useState(false)
+  const [loading, setLoading] = useState(true)
+
   const {
     weiAmount,
     tokenAmount,
     linkdropSignerSignature,
-    linkdropMasterAddress
+    linkdropMasterAddress,
+    linkKey,
+    campaignId
   } = getHashVariables()
+
+  useEffect(() => {
+    async function initialLinkCheck() {
+      setLoading(true)
+      const claimed = await checkIfClaimed({ linkdropMasterAddress, linkKey, campaignId })
+      setClaimed(claimed)
+      setLoading(false)
+    }
+    initialLinkCheck()
+  }, []);
+
+  
 
   const linkdropSDK = getLinkdropSDK({
     factoryAddress,
@@ -93,6 +120,19 @@ const ClaimPage: React.FC<PluginPageContext> = ({ burnerComponents, assets, defa
     jsonRpcUrl,
     apiHost,
   })
+
+  const renderButton = ({ loading, claimed }) => {
+    if (loading) { return 'LOADING' }
+    if (claimed) { return 'ALREADY CLAIMED' }
+    return <Button
+      disabled={!linkdropSignerSignature}
+      onClick={_ => {
+        onSubmit({ linkdropSDK, receiverAddress: defaultAccount })
+      }}
+    >
+      Claim Tokens
+    </Button>
+  }
 
   return (
     <Page title="Claim Page">
@@ -103,12 +143,7 @@ const ClaimPage: React.FC<PluginPageContext> = ({ burnerComponents, assets, defa
 
       <br></br>
       <br></br>
-      <Button
-        disabled={!linkdropSignerSignature}
-        onClick={_ => onSubmit({ linkdropSDK, receiverAddress: defaultAccount })}
-      >
-        Claim Tokens
-      </Button>
+      {renderButton({ loading, claimed })}
     </Page>
   );
 };
